@@ -12,22 +12,10 @@
 
 <body>
     <div id="app">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Pris</th>
-              <th>Name</th>
-              <th>Value</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="item in items" :key="item.id">
-              <td>{{ item.DKK_per_kWh}} dkk</td>
-              <td>{{ item.name }}</td>
-              <td>{{ item.value }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div>
+          <h2 id="energiPris"> </h2>
+        </div>
+      
     </div>
     <script src="index.js"></script>
 </body>

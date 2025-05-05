@@ -4,6 +4,14 @@ Vue.createApp({
   data() {
     return {
       items: [], // al data fra API
+      item  : null, // et enkelt item fra API
+      Date: new Date(), // dato og tid 
+      TimeNow: Date.now().toString(), // nuværende tid
+      PriceNow: null,
+
+    
+
+
     };
   },
  //instansiering
@@ -27,5 +35,9 @@ Vue.createApp({
         alert("Error in getItems: " + ex.message);
       }
     },
+    // henter et enkelt item fra api
+    GetPriceNow() {
+      
+    }
   }
 }).mount('#app');
