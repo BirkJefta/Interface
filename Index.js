@@ -1,17 +1,9 @@
-const baseUrl = 
+const baseUrl = "https://www.elprisenligenu.dk/api/v1/prices/";
 
 Vue.createApp({
   data() {
     return {
       items: [], // al data fra API
-      idToGetBy: -1,
-      singleItem: null, // til getbyid
-      deleteMessage: null,
-      deleteId: 0,
-      newItem: { name: "", value: 0 }, // til POST altså nye items
-      addMessage: "",
-      updateData: { id: 0, name: "", value: 0 }, // til PUT altså redigere
-      updateMessage: ""
     };
   },
  //instansiering
@@ -22,7 +14,8 @@ Vue.createApp({
   methods: {
     // henter alle fra API, bruges til at opdaterer tabeller efter en delete/post eller put
     getAllItems() {
-      this.getItems(baseUrl);
+        url = baseUrl + "2025/05-05_DK2.json"
+      this.getItems(url);
     },
 
     // henter alle fra api
