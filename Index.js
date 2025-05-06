@@ -5,6 +5,8 @@ Vue.createApp({
     return {
       items: [], // al data fra API
       item  : null, // et enkelt item fra API
+      TimeNow: "" // nuværende tidspunkt
+
 
     
 
@@ -14,14 +16,16 @@ Vue.createApp({
  //instansiering
   async created() {
     console.log("App initialized");
-    this.getAllItems();
+    this.FormatTime();
+     await this.getAllItems(); 
     this.GetPriceNow();
   },
   methods: {
     // henter alle fra API, bruges til at opdaterer tabeller efter en delete/post eller put
-    getAllItems() {
+     async getAllItems() {
         url = baseUrl + "2025/05-06_DK2.json"
-      this.getItems(url);
+       await this.getItems(url);
+
     },
 
     // henter alle fra api
@@ -34,9 +38,15 @@ Vue.createApp({
       }
     },
     // henter et enkelt item fra api
-    GetPriceNow() {
+    GetPriceNow() { 
+      this.item = this.items.find(item => item.time_start === this.TimeNow);
+
       
       
-    }
+    },
+    FormatTime() { 
+      this.TimeNow = new Date().toISOString(); 
+    },
+
   }
 }).mount('#app');
