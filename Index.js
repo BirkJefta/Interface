@@ -30,9 +30,9 @@ Vue.createApp({
         const response = await axios.get(url);
         this.items = response.data;
         if(this.items.length> 0) { 
-          IsDataLoaded = true;
-        }
-        IsDataLoaded = true; 
+          this.IsDataLoaded = true;
+          console.log(this.IsDataLoaded)
+        } 
       } catch (ex) {
         alert("Error in getItems: " + ex.message);
       }
