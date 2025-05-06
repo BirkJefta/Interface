@@ -5,9 +5,6 @@ Vue.createApp({
     return {
       items: [], // al data fra API
       item  : null, // et enkelt item fra API
-      Date: new Date(), // dato og tid 
-      TimeNow: Date.now().toString(), // nuværende tid
-      PriceNow: null,
 
     
 
@@ -18,11 +15,12 @@ Vue.createApp({
   async created() {
     console.log("App initialized");
     this.getAllItems();
+    this.GetPriceNow();
   },
   methods: {
     // henter alle fra API, bruges til at opdaterer tabeller efter en delete/post eller put
     getAllItems() {
-        url = baseUrl + "2025/05-05_DK2.json"
+        url = baseUrl + "2025/05-06_DK2.json"
       this.getItems(url);
     },
 
@@ -37,6 +35,7 @@ Vue.createApp({
     },
     // henter et enkelt item fra api
     GetPriceNow() {
+      
       
     }
   }
