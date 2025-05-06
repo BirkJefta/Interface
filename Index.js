@@ -44,9 +44,14 @@ Vue.createApp({
       this.item = this.items[Index];
     },
     FormatTime() { 
-      const Dato= new Date().toLocaleDateString();
-      const hour= new Date().getHours();
-      this.TimeNow ="Date" + " " + Dato + " " + "Klokken" + " " + hour + ":00";
+      const date= new Date();
+      const formated = new Intl.DateTimeFormat('da-DK',{
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit', 
+      }).format(date);
+      this.TimeNow = formated;
         console.log(this.TimeNow)
       
     },
