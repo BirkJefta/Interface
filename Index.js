@@ -5,7 +5,8 @@ Vue.createApp({
     return {
       items: [], // al data fra API
       item  : null, // et enkelt item fra API
-      TimeNow: "" // nuværende tidspunkt
+      TimeNow: "", // nuværende tidspunkt\
+      IsDataLoaded: false, // true når data er loaded
     };
   },
  //instansiering
@@ -28,20 +29,24 @@ Vue.createApp({
       try {
         const response = await axios.get(url);
         this.items = response.data;
-        console.log(this.items);
+        if(this.items.length> 0) { 
+          IsDataLoaded = true;
+        }
+        IsDataLoaded = true; 
       } catch (ex) {
         alert("Error in getItems: " + ex.message);
       }
     },
     // henter et enkelt item fra api
     GetPriceNow() { 
+      const hour = new Date().getHours()
+      this.TimeNow = parseInt(hour)
 
       this.item = this.items[this.TimeNow];
       console.log(this.item);
     },
     FormatTime() { 
-      const hour = new Date().getHours()
-      this.TimeNow = parseInt(hour)
+      
       
     },
 
