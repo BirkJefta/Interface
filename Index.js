@@ -31,7 +31,6 @@ Vue.createApp({
         this.items = response.data;
         if(this.items.length> 0) { 
           this.IsDataLoaded = true;
-          console.log(this.IsDataLoaded)
         } 
       } catch (ex) {
         alert("Error in getItems: " + ex.message);
@@ -40,13 +39,15 @@ Vue.createApp({
     // henter et enkelt item fra api
     GetPriceNow() { 
       const hour = new Date().getHours()
-      this.TimeNow = parseInt(hour)
+      const Index  = parseInt(hour)
 
-      this.item = this.items[this.TimeNow];
-      console.log(this.item);
+      this.item = this.items[Index];
     },
     FormatTime() { 
-      
+      const Dato= new Date().toLocaleDateString();
+      const hour= new Date().getHours();
+      this.TimeNow ="Date" + " " + Dato + " " + "Klokken" + " " + hour + ":00";
+        console.log(this.TimeNow)
       
     },
 
