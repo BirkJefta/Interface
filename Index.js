@@ -15,7 +15,6 @@ Vue.createApp({
     console.log("App initialized");
     this.FormatTime();
     await this.getAllItems(); 
-    this.GetPriceNow();
     
   },
   methods: {
