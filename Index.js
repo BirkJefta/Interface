@@ -7,6 +7,7 @@ Vue.createApp({
       item  : null, // et enkelt item fra API
       TimeNow: "", // nuværende tidspunkt\
       IsDataLoaded: false, // true når data er loaded
+      prisklasse: "" // prisklasse fra API
     };
   },
  //instansiering
@@ -15,15 +16,24 @@ Vue.createApp({
     this.FormatTime();
     await this.getAllItems(); 
     this.GetPriceNow();
+    
   },
   methods: {
     // henter alle fra API, bruges til at opdaterer tabeller efter en delete/post eller put
      async getAllItems() {
-        url = baseUrl + "2025/05-06_DK2.json"
+      var urlpris = "";
+      
+      if (this.prisklasse === "") {
+        urlpris = "DK1";
+      }
+      else{
+        urlpris = this.prisklasse;
+      }
+      
+        url = baseUrl + "2025/05-07_" + urlpris + ".json"
        await this.getItems(url);
 
     },
-
     // henter alle fra api
     async getItems(url) {
       try {
@@ -31,6 +41,7 @@ Vue.createApp({
         this.items = response.data;
         if(this.items.length> 0) { 
           this.IsDataLoaded = true;
+          this.GetPriceNow();
         } 
       } catch (ex) {
         alert("Error in getItems: " + ex.message);
@@ -55,6 +66,7 @@ Vue.createApp({
         console.log(this.TimeNow)
       
     },
+
 
   }
 }).mount('#app');

@@ -12,6 +12,14 @@
 
 <body>
     <div id="app">
+        <div>
+            <select @change="getAllItems()" id="Prisområde" v-model="prisklasse">
+                <option disabled value="">Vælg prisområde</option>
+                <option value="DK1">Vest</option>
+                <option value="DK2">Øst</option>
+            </select>
+        </div>
+
         <div id="DataLoaded" v-if="IsDataLoaded == true">
             <h1>Data Loaded</h1>           
         </div>
@@ -25,6 +33,10 @@
         <div id="energiPris"> 
            {{item.DKK_per_kWh}} DKK/kWh
         </div>
+        <div id="PrisområdeNu">
+            {{prisklasse}}
+        </div>
+    
 
 
 
