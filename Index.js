@@ -29,8 +29,17 @@ Vue.createApp({
       else{
         urlpris = this.prisklasse;
       }
-      
-        url = baseUrl + Date().year + "/" + Date().month + "-" + Date().day + "_" + urlpris + ".json"
+      var year = new Date().getFullYear();
+      var month = new Date().getMonth() + 1; // getMonth() returns month from 0-11
+      var day = new Date().getDate(); // getDate() returns day from 1-31
+      if (month < 10) {
+        month = "0" + month; // add leading zero if month is less than 10
+      } 
+      if (day < 10) {
+        day = "0" + day; // add leading zero if day is less than 10
+      }
+      console.log(day);
+        url = baseUrl + year + "/" + month + "-" + day + "_" + urlpris + ".json"
         console.log(url)
        await this.getItems(url);
 
