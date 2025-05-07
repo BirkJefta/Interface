@@ -8,6 +8,7 @@ Vue.createApp({
       TimeNow: "", // nuværende tidspunkt\
       IsDataLoaded: false, // true når data er loaded
       prisklasse: "" // prisklasse fra API
+
     };
   },
  //instansiering
@@ -29,8 +30,10 @@ Vue.createApp({
         urlpris = this.prisklasse;
       }
       
-        url = baseUrl + "2025/05-07_" + urlpris + ".json"
+        url = baseUrl + Date().year + "/" + Date().month + "-" + Date().day + "_" + urlpris + ".json"
+        console.log(url)
        await this.getItems(url);
+
 
     },
     // henter alle fra api
@@ -56,7 +59,7 @@ Vue.createApp({
     FormatTime() { 
       const date= new Date();
       const formated = new Intl.DateTimeFormat('da-DK',{
-        day: '2-digit',
+        day: '2-digit', 
         month: '2-digit',
         year: 'numeric',
         hour: '2-digit', 
