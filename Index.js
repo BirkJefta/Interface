@@ -1,14 +1,14 @@
-const baseUrl = "https://www.elprisenligenu.dk/api/v1/prices/";
+const baseUrl = "etrest-eaf7c7abe8hkdgh8.northeurope-01.azurewebsites.net";
 
 Vue.createApp({
   data() {
     return {
       items: [], // al data fra API
-      item  : null, // et enkelt item fra API
+      item: null, // et enkelt item fra API
       TimeNow: "", // nuværende tidspunkt\
       IsDataLoaded: false, // true når data er loaded
-      prisklasse: "" // prisklasse fra API
-
+      prisklasse: "", // prisklasse fra API
+      error: null
     };
   },
  //instansiering
@@ -19,32 +19,23 @@ Vue.createApp({
     
   },
   methods: {
+    
     // henter alle fra API, bruges til at opdaterer tabeller efter en delete/post eller put
      async getAllItems() {
       var urlpris = "";
       
-      if (this.prisklasse === "") {
+      if (this.prisklasse === "" || this.prisklasse === "DK1") {
         urlpris = "DK1";
       }
       else{
         urlpris = this.prisklasse;
       }
-      var year = new Date().getFullYear();
-      var month = new Date().getMonth() + 1; // getMonth() returns month from 0-11
-      var day = new Date().getDate(); // getDate() returns day from 1-31
-      if (month < 10) {
-        month = "0" + month; // add leading zero if month is less than 10
-      } 
-      if (day < 10) {
-        day = "0" + day; // add leading zero if day is less than 10
-      }
-      console.log(day);
-        url = baseUrl + year + "/" + month + "-" + day + "_" + urlpris + ".json"
+      var hour = new Date().getHours();
+        url = baseUrl + "/" + urlpris + "/" + hour;
         console.log(url)
        await this.getItems(url);
-
-
     },
+
     // henter alle fra api
     async getItems(url) {
       try {
@@ -55,9 +46,11 @@ Vue.createApp({
           this.GetPriceNow();
         } 
       } catch (ex) {
-        alert("Error in getItems: " + ex.message);
+        this.items = [];
+        alert("Error, could not retrieve data: " + ex.message);
       }
     },
+    
     // henter et enkelt item fra api
     GetPriceNow() { 
       const hour = new Date().getHours()
@@ -65,6 +58,7 @@ Vue.createApp({
 
       this.item = this.items[Index];
     },
+    
     FormatTime() { 
       const date= new Date();
       const formated = new Intl.DateTimeFormat('da-DK',{
@@ -77,7 +71,5 @@ Vue.createApp({
         console.log(this.TimeNow)
       
     },
-
-
   }
 }).mount('#app');
