@@ -24,7 +24,7 @@
             <h1>Data Loaded</h1>           
         </div>
         <div id="DataNotLoaded" v-if="IsDataLoaded == false">
-            <h1>Data Not Loaded</h1>
+            <h1>Data Not Loaded {{ error }}</h1>
         </div>
         <div v-if="item" id="DatoTid">
             {{displayTime}}

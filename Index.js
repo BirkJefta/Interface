@@ -18,6 +18,7 @@ Vue.createApp({
     
   },
   methods: {
+    
     // henter alle fra API, bruges til at opdaterer tabeller efter en delete/post eller put
      async getHourlyItem() {
       var urlpris = "";
@@ -32,6 +33,7 @@ Vue.createApp({
        await this.getItem(url)
 
     },
+
     // henter alle fra api
     async getItem(url) {
       try {
@@ -42,9 +44,11 @@ Vue.createApp({
           this.FormatTime();
         } 
       } catch (ex) {
-        alert("Error in getItems: " + ex.message);
+        this.items = [];
+        alert("Error, could not retrieve data: " + ex.message);
       }
     },
+    
     // henter et enkelt item fra api
     getHour() { 
       const hour = new Date().getHours()
@@ -53,7 +57,7 @@ Vue.createApp({
      FormatTime() { 
       const date= new Date(this.item.time_start);
       const formated = new Intl.DateTimeFormat('da-DK',{
-        day: '2-digit',
+        day: '2-digit', 
         month: '2-digit',
         year: 'numeric',
         hour: '2-digit',
