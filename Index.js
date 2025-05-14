@@ -1,71 +1,68 @@
-const baseUrl = "https://www.elprisenligenu.dk/api/v1/prices/";
+const baseUrl = "https://etrest-eaf7c7abe8hkdgh8.northeurope-01.azurewebsites.net/api/Elpris/";
 
 Vue.createApp({
   data() {
     return {
-      items: [], // al data fra API
       item  : null, // et enkelt item fra API
       TimeNow: "", // nuværende tidspunkt\
       IsDataLoaded: false, // true når data er loaded
-      prisklasse: "" // prisklasse fra API
+      prisklasse: "", // prisklasse fra API
+      displayTime: ""
     };
   },
  //instansiering
   async created() {
     console.log("App initialized");
-    this.FormatTime();
-    await this.getAllItems(); 
+    this.getHour();
+    await this.getHourlyItem(); 
     
   },
   methods: {
     // henter alle fra API, bruges til at opdaterer tabeller efter en delete/post eller put
-     async getAllItems() {
+     async getHourlyItem() {
       var urlpris = "";
       
       if (this.prisklasse === "") {
-        urlpris = "DK1";
+        urlpris = "West";
       }
       else{
         urlpris = this.prisklasse;
       }
-      
-        url = baseUrl + "2025/05-07_" + urlpris + ".json"
-       await this.getItems(url);
+      url = baseUrl +"/" + urlpris + "/" + this.TimeNow;
+       await this.getItem(url)
 
     },
     // henter alle fra api
-    async getItems(url) {
+    async getItem(url) {
       try {
         const response = await axios.get(url);
-        this.items = response.data;
-        if(this.items.length> 0) { 
+        this.item = response.data;
+        if(this.item != null) { 
           this.IsDataLoaded = true;
-          this.GetPriceNow();
+          this.FormatTime();
         } 
       } catch (ex) {
         alert("Error in getItems: " + ex.message);
       }
     },
     // henter et enkelt item fra api
-    GetPriceNow() { 
+    getHour() { 
       const hour = new Date().getHours()
-      const Index  = parseInt(hour)
-
-      this.item = this.items[Index];
+      this.TimeNow = parseInt(hour)
     },
-    FormatTime() { 
-      const date= new Date();
+     FormatTime() { 
+      const date= new Date(this.item.time_start);
       const formated = new Intl.DateTimeFormat('da-DK',{
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
-        hour: '2-digit', 
+        hour: '2-digit',
+        minute: '2-digit',
       }).format(date);
-      this.TimeNow = formated;
+      this.displayTime = formated;
         console.log(this.TimeNow)
       
-    },
-
+    }
 
   }
 }).mount('#app');
