@@ -19,8 +19,13 @@
         <option value="East">Øst</option>
       </select>
     </div>
+<div>
+  <input type="lavpris" name="lavpris" id="lavpris">
+</div>
 
-    <div v-if="IsDataLoaded">
+<div><input type="højpris" name="højpris" id="højpris"></div>
+<button id="submit"> submit</button>
+    <div id="IsDataLoaded" v-if="IsDataLoaded">
       <h4 class="text-success">Data Loaded</h4>
     </div>
     <div v-else>
