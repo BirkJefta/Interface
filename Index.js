@@ -1,4 +1,4 @@
-const baseUrl = "https://etrest-eaf7c7abe8hkdgh8.northeurope-01.azurewebsites.net/api/Elpris/";
+const baseUrl = "https://etrest-eaf7c7abe8hkdgh8.northeurope-01.azurewebsites.net/api/Elpris/All/";
 
 Vue.createApp({
   data() {
@@ -10,12 +10,14 @@ Vue.createApp({
       IsDataLoaded: false,
       displayTime: "",
       chart: null,
+      prisklasse: "West", // Bruges sammen med dropdown
     };
   },
 
   async created() {
     this.getHour();
     await this.getBothRegions();
+    this.updateChart(); // vis standard: Vest
   },
 
   methods: {
@@ -27,34 +29,29 @@ Vue.createApp({
     async getBothRegions() {
       try {
         const [west, east] = await Promise.all([
-          this.getFromRest(`${baseUrl}fromAPI/West`),
-          this.getFromRest(`${baseUrl}fromAPI/East`)
+          this.getFromRest(`${baseUrl}West`),
+          this.getFromRest(`${baseUrl}East`)
         ]);
-
-        console.log("West:", west);
-        console.log("East:", east);
 
         this.itemsWest = west;
         this.itemsEast = east;
         this.IsDataLoaded = true;
 
-        this.item = this.getCurrentHourItem(west);
+        this.item = this.getCurrentHourItem(west); // vis Vest ved opstart
         this.FormatTime();
-        this.updateChart();
       } catch (error) {
         console.error("Fejl ved hentning:", error);
         this.IsDataLoaded = false;
       }
     },
 
-    getCurrentHourItem(westData) {
+    getCurrentHourItem(data) {
       const currentHour = new Date().getHours();
-      return westData.find(item => new Date(item.time_start).getHours() === currentHour);
+      return data.find(item => new Date(item.time_start).getHours() === currentHour);
     },
 
     async getFromRest(url) {
       try {
-        console.log("Henter fra:", url);
         const response = await axios.get(url);
         return response.data;
       } catch (ex) {
@@ -76,6 +73,13 @@ Vue.createApp({
       }).format(date);
     },
 
+    handleSelect() {
+      const selectedData = this.prisklasse === "West" ? this.itemsWest : this.itemsEast;
+      this.item = this.getCurrentHourItem(selectedData);
+      this.FormatTime();
+      this.updateChart();
+    },
+
     updateChart() {
       const fullHourLabels = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
 
@@ -86,34 +90,30 @@ Vue.createApp({
         return Array.from({ length: 24 }, (_, i) => map.get(i) ?? null);
       };
 
-      const dataWest = pricesByHour(this.itemsWest);
-      const dataEast = pricesByHour(this.itemsEast);
+      const selectedData = this.prisklasse === 'West' ? this.itemsWest : this.itemsEast;
+      const dataSetLabel = this.prisklasse === 'West' ? 'Vest (DKK/kWh)' : 'Øst (DKK/kWh)';
+      const chartColor = this.prisklasse === 'West'
+        ? { border: "rgba(54, 162, 235, 1)", background: "rgba(54, 162, 235, 0.2)" }
+        : { border: "rgba(255, 99, 132, 1)", background: "rgba(255, 99, 132, 0.2)" };
+
+      const data = pricesByHour(selectedData);
 
       const ctx = document.getElementById("myChart").getContext("2d");
 
       if (this.chart) {
         this.chart.destroy();
       }
-
+      
       this.chart = new Chart(ctx, {
-        type: "line",
+        type: "bar",
         data: {
           labels: fullHourLabels,
           datasets: [
             {
-              label: "Vest (DKK/kWh)",
-              data: dataWest,
-              borderColor: "rgba(54, 162, 235, 1)",
-              backgroundColor: "rgba(54, 162, 235, 0.2)",
-              borderWidth: 2,
-              tension: 0.3,
-              spanGaps: true
-            },
-            {
-              label: "Øst (DKK/kWh)",
-              data: dataEast,
-              borderColor: "rgba(255, 99, 132, 1)",
-              backgroundColor: "rgba(255, 99, 132, 0.2)",
+              label: dataSetLabel,
+              data: data,
+              borderColor: chartColor.border,
+              backgroundColor: chartColor.background,
               borderWidth: 2,
               tension: 0.3,
               spanGaps: true
@@ -128,6 +128,11 @@ Vue.createApp({
               title: {
                 display: true,
                 text: "Tidspunkt"
+              },
+              ticks: {
+                autoSkip: false,
+                maxRotation: 0,
+                minRotation: 0
               }
             },
             y: {
@@ -152,5 +157,4 @@ Vue.createApp({
     }
   }
 }).mount("#app");
-
 
