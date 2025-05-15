@@ -4,6 +4,7 @@ Vue.createApp({
   data() {
     return {
       item  : null, // et enkelt item fra API
+      items: [],
       TimeNow: "", // nuværende tidspunkt\
       IsDataLoaded: false, // true når data er loaded
       prisklasse: "", // prisklasse fra API
@@ -15,11 +16,11 @@ Vue.createApp({
     console.log("App initialized");
     this.getHour();
     await this.getHourlyItem(); 
+    this.FormatTime();
     
   },
   methods: {
-    
-    // henter alle fra API, bruges til at opdaterer tabeller efter en delete/post eller put
+    // henter alle fra API
      async getHourlyItem() {
       var urlpris = "";
       
@@ -30,23 +31,41 @@ Vue.createApp({
         urlpris = this.prisklasse;
       }
       url = baseUrl +"/" + urlpris + "/" + this.TimeNow;
-       await this.getItem(url)
-
+      this.item = await this.getFromRest(url)
+      console.log("Data hentet i getHourlyItem:", this.item);
     },
 
     // henter alle fra api
-    async getItem(url) {
+    async getFromRest(url) {
       try {
         const response = await axios.get(url);
-        this.item = response.data;
-        if(this.item != null) { 
+        console.log(response.data);
+        if(response.data != null) { 
           this.IsDataLoaded = true;
-          this.FormatTime();
-        } 
+        }
+        return response.data;
+       
       } catch (ex) {
         this.items = [];
+        this.item = "";
         alert("Error, could not retrieve data: " + ex.message);
       }
+    },
+    async getAllItems() {
+      var urlpris = "";
+      
+      if (this.prisklasse === "") {
+        urlpris = "West";
+      }
+      else{
+        urlpris = this.prisklasse;
+      }
+      url = baseUrl + "/" + "All" + this.prisklasse;
+      this.items = await this.getFromRest(url);
+    },
+    async handleSelect(){
+      await this.getHourlyItem();
+      await this.getAllItems();
     },
     
     // henter et enkelt item fra api
