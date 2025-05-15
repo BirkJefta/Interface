@@ -1,91 +1,105 @@
-const baseUrl = "https://etrest-eaf7c7abe8hkdgh8.northeurope-01.azurewebsites.net/api/Elpris/";
-
+// const baseUrl = "https://etrest-eaf7c7abe8hkdgh8.northeurope-01.azurewebsites.net/api/Elpris/";
+const baseUrl = "https://etrest-eaf7c7abe8hkdgh8.northeurope-01.azurewebsites.net/swagger/v1/swagger.json"
 Vue.createApp({
   data() {
     return {
-      item  : null, // et enkelt item fra API
+      item: null,
       items: [],
-      TimeNow: "", // nuværende tidspunkt\
-      IsDataLoaded: false, // true når data er loaded
-      prisklasse: "", // prisklasse fra API
-      displayTime: ""
+      TimeNow: "",
+      IsDataLoaded: false,
+      prisklasse: "",
+      displayTime: "",
+      chart: null, // Reference to the Chart.js instance
     };
   },
- //instansiering
   async created() {
     console.log("App initialized");
     this.getHour();
-    await this.getHourlyItem(); 
+    await this.getHourlyItem();
     this.FormatTime();
-    
+  },
+  mounted() {
+    this.createChart(); // Initialize the chart when the component is mounted
   },
   methods: {
-    // henter alle fra API
-     async getHourlyItem() {
-      var urlpris = "";
-      
-      if (this.prisklasse === "") {
-        urlpris = "West";
-      }
-      else{
-        urlpris = this.prisklasse;
-      }
-      url = baseUrl +"/" + urlpris + "/" + this.TimeNow;
-      this.item = await this.getFromRest(url)
+    async getHourlyItem() {
+      let urlpris = this.prisklasse || "West";
+      const url = `${baseUrl}/${urlpris}/${this.TimeNow}`;
+      this.item = await this.getFromRest(url);
       console.log("Data hentet i getHourlyItem:", this.item);
-    },
 
-    // henter alle fra api
+      console.log("Data hentet i getHourlyItem:", this.item);
+      if (this.items && this.items.length > 0) {
+        this.updateChart(); // Opdater grafen med de hentede data
+      }
+
+    },
     async getFromRest(url) {
       try {
         const response = await axios.get(url);
         console.log(response.data);
-        if(response.data != null) { 
+        if (response.data != null) {
           this.IsDataLoaded = true;
         }
         return response.data;
-       
       } catch (ex) {
         this.items = [];
         this.item = "";
         alert("Error, could not retrieve data: " + ex.message);
       }
     },
-    async getAllItems() {
-      var urlpris = "";
-      
-      if (this.prisklasse === "") {
-        urlpris = "West";
+    updateChart() {
+      if (!this.item || this.item.length === 0) {
+        console.error("No data available to update the chart.");
+        return;
       }
-      else{
-        urlpris = this.prisklasse;
+      const labels = this.item.map(item => {
+        const date = new Date(item.time_start);
+        return `${date.getHours()}:00`;
+      });
+      const data = this.items.map(item => item.DKK_per_kWh); // Brug DKK_per_kWh som data
+
+      if (this.chart) {
+        this.chart.destroy(); // vi rydder den gamle graf 
       }
-      url = baseUrl + "/" + "All" + this.prisklasse;
-      this.items = await this.getFromRest(url);
-    },
-    async handleSelect(){
-      await this.getHourlyItem();
-      await this.getAllItems();
-    },
-    
-    // henter et enkelt item fra api
-    getHour() { 
-      const hour = new Date().getHours()
-      this.TimeNow = parseInt(hour)
-    },
-     FormatTime() { 
-      const date= new Date(this.item.time_start);
-      const formated = new Intl.DateTimeFormat('da-DK',{
-        day: '2-digit', 
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      }).format(date);
-      this.displayTime = formated;
-        console.log(this.TimeNow)
-      
+
+      // vi initialiserer grafen
+      const ctx = document.getElementById("myChart").getContext("2d");
+      this.chart = new Chart(ctx, {
+        type: "line", // Type of chart
+        data: {
+          labels: labels, // X-axis labels
+          datasets: [
+            {
+              label: "Energy Prices (DKK/kWh)",
+              data: data, // Y-axis data
+              borderColor: "rgba(75, 192, 192, 1)",
+              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: true,
+              position: "top",
+            },
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+            },
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
     }
 
-  }
-}).mount('#app');
+
+  },
+
+}).mount("#app");
