@@ -10,14 +10,25 @@ Vue.createApp({
       IsDataLoaded: false,
       displayTime: "",
       chart: null,
-      prisklasse: "West", // Bruges sammen med dropdown
+      prisklasse: "West",
     };
+  },
+
+  computed: {
+    kategoriNu() {
+      if (!this.item || typeof this.item.dkK_per_kWh !== "number") return "Ukendt";
+
+      const pris = this.item.dkK_per_kWh;
+      if (pris <= 0.5) return "Lav";
+      else if (pris <= 0.9) return "Mellem";
+      else return "Høj";
+    }
   },
 
   async created() {
     this.getHour();
     await this.getBothRegions();
-    this.updateChart(); // vis standard: Vest
+    this.updateChart();
   },
 
   methods: {
@@ -37,7 +48,7 @@ Vue.createApp({
         this.itemsEast = east;
         this.IsDataLoaded = true;
 
-        this.item = this.getCurrentHourItem(west); // vis Vest ved opstart
+        this.item = this.getCurrentHourItem(west);
         this.FormatTime();
       } catch (error) {
         console.error("Fejl ved hentning:", error);
@@ -47,7 +58,10 @@ Vue.createApp({
 
     getCurrentHourItem(data) {
       const currentHour = new Date().getHours();
-      return data.find(item => new Date(item.time_start).getHours() === currentHour);
+      return data.find(item => {
+        const itemHour = new Date(item.time_start).getHours();
+        return itemHour === currentHour;
+      }) || data[0]; // fallback hvis ingen time matcher
     },
 
     async getFromRest(url) {
@@ -76,7 +90,9 @@ Vue.createApp({
     handleSelect() {
       const selectedData = this.prisklasse === "West" ? this.itemsWest : this.itemsEast;
       this.item = this.getCurrentHourItem(selectedData);
-      this.FormatTime();
+      if (this.item) {
+        this.FormatTime();
+      }
       this.updateChart();
     },
 
@@ -98,12 +114,23 @@ Vue.createApp({
 
       const data = pricesByHour(selectedData);
 
-      const ctx = document.getElementById("myChart").getContext("2d");
-
+      // Slet og genskab canvas korrekt
       if (this.chart) {
         this.chart.destroy();
+        this.chart = null;
+
+        const canvas = document.getElementById("myChart");
+        const parent = canvas.parentNode;
+        canvas.remove();
+
+        const newCanvas = document.createElement("canvas");
+        newCanvas.id = "myChart";
+        parent.appendChild(newCanvas);
       }
-      
+
+      // Nu opret context EFTER canvas er genskabt
+      const ctx = document.getElementById("myChart").getContext("2d");
+
       this.chart = new Chart(ctx, {
         type: "bar",
         data: {
@@ -157,4 +184,3 @@ Vue.createApp({
     }
   }
 }).mount("#app");
-
