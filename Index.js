@@ -1,4 +1,4 @@
-const baseUrl = "https://etrest-eaf7c7abe8hkdgh8.northeurope-01.azurewebsites.net/api/Elpris/All/";
+const baseUrl = "https://etrest-eaf7c7abe8hkdgh8.northeurope-01.azurewebsites.net/api/Elpris/";
 
 Vue.createApp({
   data() {
@@ -17,7 +17,7 @@ Vue.createApp({
 
   async created() {
     this.getHour();
-    await this.getBothRegions();
+    await this.getAll();
     this.updateChart();
   },
 
@@ -27,18 +27,16 @@ Vue.createApp({
       this.TimeNow = hour;
     },
 
-    async getBothRegions() {
+    async getAll() {
       try {
-        const [west, east] = await Promise.all([
-          this.getFromRest(`${baseUrl}West`),
-          this.getFromRest(`${baseUrl}East`)
-        ]);
-
-        this.itemsWest = west;
-        this.itemsEast = east;
-        this.IsDataLoaded = true;
-
-        this.item = this.getCurrentHourItem(west);
+        urlWest = baseUrl + "All" + "/" + "West";
+        urlEast = baseUrl + "All" + "/" + "East";
+        this.itemsWest = await this.getFromRest(urlWest);
+        this.itemsEast = await this.getFromRest(urlEast);
+        if (this.itemsWest.length > 0 && this.itemsEast.length > 0) {
+          this.IsDataLoaded = true;
+        }
+        this.getCurrentHourItem();
         this.FormatTime();
       } catch (error) {
         console.error("Fejl ved hentning:", error);
@@ -46,12 +44,17 @@ Vue.createApp({
       }
     },
 
-    getCurrentHourItem(data) {
-      const currentHour = new Date().getHours();
-      return data.find(item => {
-        const itemHour = new Date(item.time_start).getHours();
-        return itemHour === currentHour;
-      }) || data[0]; // fallback hvis ingen time matcher
+    getCurrentHourItem() {
+      this.getHour();
+      if(this.prisklasse === "West") {
+        this.item = this.itemsWest[this.TimeNow]
+      }
+      else if(this.prisklasse === "East") {
+        this.item = this.itemsEast[this.TimeNow]
+      }
+      else {
+        alert("could not get current data")
+      }
     },
 
     async getFromRest(url) {
@@ -78,8 +81,7 @@ Vue.createApp({
     },
 
     handleSelect() {
-      const selectedData = this.prisklasse === "West" ? this.itemsWest : this.itemsEast;
-      this.item = this.getCurrentHourItem(selectedData);
+      this.getCurrentHourItem();
       if (this.item) {
         this.FormatTime();
       }
