@@ -89,7 +89,7 @@ Vue.createApp({
     },
 
     updateChart() {
-      const fullHourLabels = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
+      const fullHourLabels = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}`);
 
       const pricesByHour = (items) => {
         const map = new Map(
