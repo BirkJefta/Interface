@@ -54,7 +54,7 @@
             <canvas class="shadow-sm mb-3 border p-4" id="myChart"></canvas>
           </div>
           <div class="col-3 border shadow ">
-            <div class="">
+            <div>
               <h1 class="text-center mt-3">Current price</h1>
               <ul class="list-group mt-4">
                 <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -69,6 +69,30 @@
                     style="color: black">{{item.dkK_per_kWh}} dkk/kWh</span>
                 </li>
               </ul>
+              <div class="border-top mt-4">
+                <h4 class="text-center mt-3">Select price range</h4>
+                <div>
+                  <form @submit.prevent="sendPrice">
+                    <div class="form-floating">
+                      <input type="number" step="any" class="form-control" id="highinterval"
+                        placeholder="Enter high price" name="High" v-model.number="priceintervalToSend.high" required>
+                      <label for="highinterval">High price</label>
+                    </div>
+                    <div class="form-floating mt-2">
+                      <input type="number" step="any" class="form-control mt-2" id="lowinterval"
+                        placeholder="Enter low price" name="Low" v-model.number="priceintervalToSend.low" equired>
+                      <label for="lowinterval">Low price</label>
+                    </div>
+                    <div v-if="formError" class="text-danger mt-2">
+                      {{ formError }}
+                    </div>
+                    <div v-if="formsuccess" class="text-success mt-2">
+                      {{ formsuccess }}
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Submit</button>
+                  </form>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -76,7 +100,8 @@
 
     </div>
 
-    
+
 </body>
 <script src="index.js"></script>
+
 </html>

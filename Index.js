@@ -12,21 +12,26 @@ Vue.createApp({
       displayTime: "",
       chart: null,
       prisklasse: "West",
-      backgroundColor: ""
+      backgroundColor: "",
+      priceintervalToSend: { "id": 2, "high": null, "low": null },
+      formError: "",
+      formsuccess: "",
     };
   },
 
   async created() {
-    this.getHour();
-    await this.getAll();
-    console.log(this.item);
-    this.updateChart();
-    this.colorByCategory();
-    console.log(this.item.category);
-    console.log(this.backgroundColor);
+    await this.loadData();
   },
 
   methods: {
+    async loadData() {
+      this.getHour();
+      await this.getAll();
+      console.log(this.item);
+      this.updateChart();
+      this.colorByCategory();
+
+    },
     getHour() {
       const hour = new Date().getHours();
       this.TimeNow = hour;
@@ -91,6 +96,41 @@ Vue.createApp({
         this.FormatTime();
       }
       this.updateChart();
+    },
+    async sendPrice() {
+      this.formError = "";
+      const high = this.priceintervalToSend.high;
+      const low = this.priceintervalToSend.low;
+      // til at håndtere decimaler
+      if (typeof high === "string") {
+       this.priceintervalToSend.high = parseFloat(high.replace(",", "."));
+      }
+      if (typeof low === "string") {
+        this.priceintervalToSend.low = parseFloat(low.replace(",", "."));
+      }
+      // fejlbeskede til tomme felter
+      if (high === "" || low === "" || high == null || low == null) {
+        this.formError = "Enter both high and low value.";
+        return;
+      }
+      // fejlbesked til ikke-numeriske værdier
+      if (typeof high !== "number" || typeof low !== "number") {
+        this.formError = "Enter a number, and use decimal point (.) as seperator.";
+        return;
+      }
+      if (this.priceintervalToSend.high !== null && this.priceintervalToSend.low !== null) {
+        try {
+          console.log(this.priceintervalToSend);
+          const response = await axios.put(baseUrl, this.priceintervalToSend);
+          console.log(response);
+          this.formsuccess = "success";
+          await this.loadData();
+        } catch (ex) {
+          console.error("API-fejl:", ex.response?.status, ex.response?.data);
+          alert("Error retrieving data: " + ex.message);
+          return [];
+        }
+      }
     },
     colorByCategory() {
       if (this.item.category === "high") {
