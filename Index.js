@@ -12,7 +12,7 @@ Vue.createApp({
       displayTime: "",
       chart: null,
       prisklasse: "West",
-      backgroundColor:""
+      backgroundColor: ""
     };
   },
 
@@ -51,10 +51,10 @@ Vue.createApp({
 
     getCurrentHourItem() {
       this.getHour();
-      if(this.prisklasse === "West") {
+      if (this.prisklasse === "West") {
         this.item = this.itemsWest[this.TimeNow]
       }
-      else if(this.prisklasse === "East") {
+      else if (this.prisklasse === "East") {
         this.item = this.itemsEast[this.TimeNow]
       }
       else {
@@ -93,13 +93,13 @@ Vue.createApp({
       this.updateChart();
     },
     colorByCategory() {
-      if (this.item.category === "high"){
+      if (this.item.category === "high") {
         this.backgroundColor = "red";
       }
-      else if (this.item.category === "medium"){
+      else if (this.item.category === "medium") {
         this.backgroundColor = "yellow";
       }
-      else if (this.item.category === "low"){
+      else if (this.item.category === "low") {
         this.backgroundColor = "green";
       }
       else {
@@ -108,24 +108,29 @@ Vue.createApp({
     },
 
     updateChart() {
-      const fullHourLabels = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}`);
-
-      const pricesByHour = (items) => {
-        const map = new Map(
-          items.map(item => [new Date(item.time_start).getHours(), item.dkK_per_kWh])
-        );
-        return Array.from({ length: 24 }, (_, i) => map.get(i) ?? null);
-      };
 
       const selectedData = this.prisklasse === 'West' ? this.itemsWest : this.itemsEast;
-      const dataSetLabel = this.prisklasse === 'West' ? 'Vest (DKK/kWh)' : 'Øst (DKK/kWh)';
-      const chartColor = this.prisklasse === 'West'
-        ? { border: "rgba(54, 162, 235, 1)", background: "rgba(54, 162, 235, 0.2)" }
-        : { border: "rgba(255, 99, 132, 1)", background: "rgba(255, 99, 132, 0.2)" };
+      const dataSetLabel = this.prisklasse === 'West' ? 'West (DKK/kWh)' : 'East (DKK/kWh)';
+      console.log(this.itemsEast);
+      const data = [];
+      const labels = [];
+      const backgroundColors = [];
+      for (let i = 0; i < 24; i++) {
+        labels.push(i.toString().padStart(2, '0') + ':00');
+      };
+      selectedData.forEach(element => {
+        data.push(element.dkK_per_kWh);
 
-      const data = pricesByHour(selectedData);
+        let color = 'gray';
+        if (element.category === 'high') color = 'red';
+        else if (element.category === 'medium') color = 'yellow';
+        else if (element.category === 'low') color = 'green';
+        backgroundColors.push(color);
+      });
+      const maxY = Math.max(...data) + 0.05;
+      const minY = Math.min(...data) - 0.05;
 
-      // Slet og genskab canvas korrekt
+      // Sletter og laver chart igen
       if (this.chart) {
         this.chart.destroy();
         this.chart = null;
@@ -145,14 +150,13 @@ Vue.createApp({
       this.chart = new Chart(ctx, {
         type: "bar",
         data: {
-          labels: fullHourLabels,
+          labels: labels,
           datasets: [
             {
               label: dataSetLabel,
               data: data,
-              borderColor: chartColor.border,
-              backgroundColor: chartColor.background,
-              borderWidth: 2,
+              backgroundColor: backgroundColors,
+              borderWidth: 1,
               tension: 0.3,
               spanGaps: true
             }
@@ -174,14 +178,14 @@ Vue.createApp({
               }
             },
             y: {
-              min: -0.2,
-              max: 1.2,
+              min: minY,
+              max: maxY,
               ticks: {
                 stepSize: 0.2
               },
               title: {
                 display: true,
-                text: "Pris (DKK/kWh)"
+                text: "Price (DKK/kWh)"
               }
             }
           },
