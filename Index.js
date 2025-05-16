@@ -3,6 +3,7 @@ const baseUrl = "https://etrest-eaf7c7abe8hkdgh8.northeurope-01.azurewebsites.ne
 Vue.createApp({
   data() {
     return {
+      withoutTransportFee: true,
       itemsWest: [],
       itemsEast: [],
       item: null,
@@ -12,17 +13,6 @@ Vue.createApp({
       chart: null,
       prisklasse: "West",
     };
-  },
-
-  computed: {
-    kategoriNu() {
-      if (!this.item || typeof this.item.dkK_per_kWh !== "number") return "Ukendt";
-
-      const pris = this.item.dkK_per_kWh;
-      if (pris <= 0.5) return "Lav";
-      else if (pris <= 0.9) return "Mellem";
-      else return "Høj";
-    }
   },
 
   async created() {
