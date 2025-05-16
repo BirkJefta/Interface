@@ -116,7 +116,7 @@ Vue.createApp({
       const labels = [];
       const backgroundColors = [];
       for (let i = 0; i < 24; i++) {
-        labels.push(i.toString().padStart(2, '0') + ':00');
+        labels.push(i.toString().padStart(2, '0'));
       };
       selectedData.forEach(element => {
         data.push(element.dkK_per_kWh);
@@ -169,7 +169,7 @@ Vue.createApp({
             x: {
               title: {
                 display: true,
-                text: "Tidspunkt"
+                text: "Time (Hour)"
               },
               ticks: {
                 autoSkip: false,
@@ -189,11 +189,6 @@ Vue.createApp({
               }
             }
           },
-          plugins: {
-            legend: {
-              position: "top"
-            }
-          }
         }
       });
     }
