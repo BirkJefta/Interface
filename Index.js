@@ -12,13 +12,18 @@ Vue.createApp({
       displayTime: "",
       chart: null,
       prisklasse: "West",
+      backgroundColor:""
     };
   },
 
   async created() {
     this.getHour();
     await this.getAll();
+    console.log(this.item);
     this.updateChart();
+    this.colorByCategory();
+    console.log(this.item.category);
+    console.log(this.backgroundColor);
   },
 
   methods: {
@@ -86,6 +91,20 @@ Vue.createApp({
         this.FormatTime();
       }
       this.updateChart();
+    },
+    colorByCategory() {
+      if (this.item.category === "high"){
+        this.backgroundColor = "red";
+      }
+      else if (this.item.category === "medium"){
+        this.backgroundColor = "yellow";
+      }
+      else if (this.item.category === "low"){
+        this.backgroundColor = "green";
+      }
+      else {
+        this.backgroundColor = "white";
+      }
     },
 
     updateChart() {
