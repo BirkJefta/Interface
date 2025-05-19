@@ -59,37 +59,43 @@
               <ul class="list-group mt-4">
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                   <h5 class="font-weight-bold"> Time:</h5>
-                  <span class="badge rounded-pill" style="color: black">
+                  <span id="DatoTid" class="badge rounded-pill" style="color: black">
                     {{displayTime}}
                   </span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                   <h5 class="font-weight-bold"> Price:</h5>
-                  <span class="badge rounded-pill " :style="{ backgroundColor: backgroundColor }"
-                    style="color: black">{{item.dkK_per_kWh}} dkk/kWh</span>
+                  <span id="energiPris" class="badge rounded-pill " :style="{ backgroundColor: backgroundColor }"
+                    style="color: black">{{item.dkK_per_kWh}} DKK/kWh</span>
                 </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <h5 class="font-weight-bold"> Region:</h5>
+                  <span id="PrisOmrådeNu" class="badge rounded-pill " :style="{ backgroundColor: backgroundColor }"
+                    style="color: black">{{prisklasse}}</span>
+                </li>
+                
               </ul>
               <div class="border-top mt-4">
                 <h4 class="text-center mt-3">Select price range</h4>
                 <div>
                   <form @submit.prevent="sendPrice">
                     <div class="form-floating">
-                      <input type="number" step="any" class="form-control" id="highinterval"
+                      <input id="highinterval" type="number" step="any" class="form-control" 
                         placeholder="Enter high price" name="High" v-model.number="priceintervalToSend.high" required>
                       <label for="highinterval">High price</label>
                     </div>
                     <div class="form-floating mt-2">
-                      <input type="number" step="any" class="form-control mt-2" id="lowinterval"
+                      <input id="lowinterval" type="number" step="any" class="form-control mt-2"
                         placeholder="Enter low price" name="Low" v-model.number="priceintervalToSend.low" equired>
                       <label for="lowinterval">Low price</label>
                     </div>
-                    <div v-if="formError" class="text-danger mt-2">
+                    <div id="formError" v-if="formError" class="text-danger mt-2">
                       {{ formError }}
                     </div>
-                    <div v-if="formsuccess" class="text-success mt-2">
+                    <div name="formsuccess" id="formsuccess" v-if="formsuccess" class="text-success mt-2">
                       {{ formsuccess }}
                     </div>
-                    <button type="submit" class="btn btn-primary mt-3">Submit</button>
+                    <button id="submit" type="submit" class="btn btn-primary mt-3">Submit</button>
                   </form>
                 </div>
               </div>

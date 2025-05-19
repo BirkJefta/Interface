@@ -113,11 +113,7 @@ Vue.createApp({
         this.formError = "Enter both high and low value.";
         return;
       }
-      // fejlbesked til ikke-numeriske værdier
-      if (typeof high !== "number" || typeof low !== "number") {
-        this.formError = "Enter a number, and use decimal point (.) as seperator.";
-        return;
-      }
+
       if (this.priceintervalToSend.high !== null && this.priceintervalToSend.low !== null) {
         try {
           console.log(this.priceintervalToSend);
