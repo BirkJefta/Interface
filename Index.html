@@ -70,12 +70,12 @@
       <form @submit.prevent="sendPrice">
         <div class="form-floating mb-2">
           <input id="highinterval" type="number" step="any" class="form-control" placeholder="Enter high price"
-            v-model.number="priceintervalToSend.high" required>
+            v-model.number="priceintervalToSend.high">
           <label for="highinterval">High price</label>
         </div>
         <div class="form-floating mb-2">
           <input id="lowinterval" type="number" step="any" class="form-control" placeholder="Enter low price"
-            v-model.number="priceintervalToSend.low" required>
+            v-model.number="priceintervalToSend.low">
           <label for="lowinterval">Low price</label>
         </div>
         <div id="formError" v-if="formError" class="text-danger mt-2">

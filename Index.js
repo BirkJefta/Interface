@@ -25,6 +25,8 @@ Vue.createApp({
 
   methods: {
     async loadData() {
+      this.IsDataLoaded = false;
+      console.log("Loading data...");
       this.getHour();
       await this.getAll();
       console.log(this.item);
@@ -39,9 +41,11 @@ Vue.createApp({
 
     async getAll() {
       try {
+        console.log(this.IsDataLoaded);
         urlWest = baseUrl + "All" + "/" + "West";
         urlEast = baseUrl + "All" + "/" + "East";
         while (this.IsDataLoaded === false) {
+          console.log("kører rest");
           this.itemsWest = await this.getFromRest(urlWest);
           this.itemsEast = await this.getFromRest(urlEast);
           if (this.itemsWest.length > 0 && this.itemsEast.length > 0) {
@@ -112,6 +116,7 @@ Vue.createApp({
       this.formError = "";
       const high = this.priceintervalToSend.high;
       const low = this.priceintervalToSend.low;
+      console.log(high);
       // til at håndtere decimaler
       if (typeof high === "string") {
        this.priceintervalToSend.high = parseFloat(high.replace(",", "."));
@@ -122,6 +127,7 @@ Vue.createApp({
       // fejlbeskede til tomme felter
       if (high === "" || low === "" || high == null || low == null) {
         this.formError = "Enter both high and low value.";
+        console.log(this.formError)
         return;
       }
 
