@@ -3,7 +3,6 @@ const baseUrl = "https://etrest-eaf7c7abe8hkdgh8.northeurope-01.azurewebsites.ne
 Vue.createApp({
   data() {
     return {
-      withoutTransportFee: true,
       itemsWest: [],
       itemsEast: [],
       item: null,
