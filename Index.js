@@ -130,13 +130,13 @@ Vue.createApp({
     },
     colorByCategory() {
       if (this.item.category === "high") {
-        this.backgroundColor = "red";
+        this.backgroundColor = "#dc143c";
       }
       else if (this.item.category === "medium") {
-        this.backgroundColor = "yellow";
+        this.backgroundColor = "#ffd700";
       }
       else if (this.item.category === "low") {
-        this.backgroundColor = "green";
+        this.backgroundColor = "#2e8b57";
       }
       else {
         this.backgroundColor = "white";
@@ -158,9 +158,9 @@ Vue.createApp({
         data.push(element.dkK_per_kWh);
 
         let color = 'gray';
-        if (element.category === 'high') color = 'red';
-        else if (element.category === 'medium') color = 'yellow';
-        else if (element.category === 'low') color = 'green';
+        if (element.category === 'high') color = '	#dc143c';
+        else if (element.category === 'medium') color = '#ffd700';
+        else if (element.category === 'low') color = '#2e8b57';
         backgroundColors.push(color);
       });
       const maxY = Math.max(...data) + 0.05;
