@@ -41,11 +41,21 @@ Vue.createApp({
       try {
         urlWest = baseUrl + "All" + "/" + "West";
         urlEast = baseUrl + "All" + "/" + "East";
-        this.itemsWest = await this.getFromRest(urlWest);
-        this.itemsEast = await this.getFromRest(urlEast);
-        if (this.itemsWest.length > 0 && this.itemsEast.length > 0) {
+        while (this.IsDataLoaded === false) {
+          this.itemsWest = await this.getFromRest(urlWest);
+          this.itemsEast = await this.getFromRest(urlEast);
+          if (this.itemsWest.length > 0 && this.itemsEast.length > 0) {
           this.IsDataLoaded = true;
-        }
+          }
+          else {
+          const response = await axios.get(baseUrl +  "/" + "FromAPI");
+            if (response.status === 204 && i < 5) {
+              i++;
+              this.getAll()
+            }
+          }
+        
+        }  
         this.getCurrentHourItem();
         this.FormatTime();
       } catch (error) {
@@ -70,6 +80,7 @@ Vue.createApp({
     async getFromRest(url) {
       try {
         const response = await axios.get(url);
+        
         return response.data;
       } catch (ex) {
         console.error("API-fejl:", ex.response?.status, ex.response?.data);
