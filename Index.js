@@ -52,7 +52,7 @@ Vue.createApp({
           }
           else {
           const response = await axios.get(baseUrl +  "/" + "FromAPI");
-            if (response.status === 204 && i < 5) {
+            if (response.status === 204 || 200 && i < 5) {
               i++;
               this.getAll()
             }
